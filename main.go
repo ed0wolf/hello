@@ -2,7 +2,7 @@
 package main
 
 import (
-	"ed0wolf/hello/web"
+	"github.com/ed0wolf/hello/web"
 )
 
 func main() {

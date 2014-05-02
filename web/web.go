@@ -8,8 +8,8 @@ import (
 	"github.com/zenazn/goji/graceful"
 	"github.com/zenazn/goji/web"
 
-	"ed0wolf/hello/web/controllers"
-	"ed0wolf/hello/web/middleware/assets"
+	"github.com/ed0wolf/hello/web/controllers"
+	"github.com/ed0wolf/hello/web/middleware/assets"
 )
 
 var app *web.Mux
