@@ -22,7 +22,7 @@ type FakeAssetsRetriever struct {
 	path     string
 }
 
-func (retriever *FakeAssetsRetriever) Retrieve(assetsPath string) {
+func (retriever *FakeAssetsRetriever) Retrieve(assetsPath string, w http.ResponseWriter) {
 	retriever.isCalled = true
 	retriever.path = assetsPath
 }
@@ -33,7 +33,7 @@ var fakeAssetsRetriever FakeAssetsRetriever
 var assetHandler AssetsHandler
 var responseRecorder *httptest.ResponseRecorder
 
-func initTest() {
+func initAssetsTest() {
 	fakeHandler = FakeHandler{}
 	fakeAssetsRetriever = FakeAssetsRetriever{}
 	assetHandler = AssetsHandler{&fakeAssetsRetriever}
@@ -42,7 +42,7 @@ func initTest() {
 }
 
 func TestWhenRequestUriIsRequestingAnAsset(t *testing.T) {
-	initTest()
+	initAssetsTest()
 	var request = &http.Request{RequestURI: "/assets/path/to/some/file.js"}
 
 	handlerFunc.ServeHTTP(responseRecorder, request)
@@ -60,7 +60,7 @@ func TestWhenRequestUriIsRequestingAnAsset(t *testing.T) {
 }
 
 func TestWhenRequestUriIsNotRequestingAnAsset(t *testing.T) {
-	initTest()
+	initAssetsTest()
 	var request = &http.Request{RequestURI: "/"}
 
 	handlerFunc.ServeHTTP(responseRecorder, request)

@@ -14,7 +14,7 @@ type AssetsHandler struct {
 func (handler *AssetsHandler) HandleAssets(h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		if isAssetRequest(r.RequestURI) {
-			handler.retriever.Retrieve(getAssetPath(r.RequestURI))
+			handler.retriever.Retrieve(getAssetPath(r.RequestURI), w)
 		} else {
 			h.ServeHTTP(w, r)
 		}
