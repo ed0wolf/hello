@@ -1,6 +1,8 @@
 package assets
 
 import (
+	"code.google.com/p/go-uuid/uuid"
+	"fmt"
 	"net/http/httptest"
 	"os"
 	"testing"
@@ -8,12 +10,14 @@ import (
 
 const expectedFileBody string = "BODY"
 
-var rootDir string
+var rootDir, assetPath, expectedContentType string
 var writer *httptest.ResponseRecorder
 var retriever *FileAssetsRetriever
 
 func initRetrieverTest() {
 	rootDir = os.TempDir()
+	expectedContentType = "application/javascript"
+	assetPath = fmt.Sprintf("/%s.js", uuid.New())
 	writer = httptest.NewRecorder()
 	retriever = &FileAssetsRetriever{rootDir}
 }
@@ -21,33 +25,80 @@ func initRetrieverTest() {
 func TestWhenTheAssetDoesNotExist(t *testing.T) {
 	initRetrieverTest()
 
-	retriever.Retrieve("this_really_shouldnt_exist.js", writer)
+	retriever.Retrieve(assetPath, writer)
 
 	if writer.Code != 404 {
-		t.Errorf("should have returned 404 Not Found but instead returned: %v", writer.Code)
+		t.Errorf("should have returned 404 but instead returned: %s", writer.Code)
 	}
 }
 
 func TestWhenTheReqeustedAssetExists(t *testing.T) {
 	initRetrieverTest()
-	assetPath := "/should_exist_for_test.js"
-	file, err := os.Create(rootDir + assetPath)
-	if err != nil {
-		t.Fatal(err)
-	} else {
-		file.WriteString(expectedFileBody)
-	}
+	createAsset(rootDir+assetPath, expectedFileBody, t)
 
 	retriever.Retrieve(assetPath, writer)
 
-	os.Remove(file.Name())
-
-	writer.Flush()
 	body := writer.Body.String()
 	if writer.Code != 200 {
-		t.Errorf("should have returned 200 OK but instead returned: %v", writer.Code)
+		t.Errorf("should have returned 200 but instead returned: %s", writer.Code)
 	}
 	if body != expectedFileBody {
-		t.Errorf("should have written %0v to responseWriter but wrote: %1v", expectedFileBody, body)
+		t.Errorf("should have written %s to responseWriter but wrote: %s", expectedFileBody, body)
 	}
+
+	actualContentType := writer.Header().Get("Content-Type")
+	if actualContentType != expectedContentType {
+		t.Errorf("should have set content-type header to %s but was instead %s", expectedContentType, actualContentType)
+	}
+
+	deleteAsset(rootDir + assetPath)
+}
+
+func TestWhenGettingMimeForJsAssetPath(t *testing.T) {
+	mime, err := getAssetMime("jquery.js")
+
+	if err != nil {
+		t.Error("should not have returned an error")
+	}
+
+	if mime != "application/javascript" {
+		t.Errorf("should have returned 'application/javascript' but returned: %s", mime)
+	}
+}
+
+func TestWhenGettingMimeForCssAssetPath(t *testing.T) {
+	mime, err := getAssetMime("main.css")
+
+	if err != nil {
+		t.Error("should not have returned an error")
+	}
+
+	if mime != "text/css" {
+		t.Errorf("should have returned 'text/css' but returned: %s", mime)
+	}
+}
+
+func TestWhenGettingUnknownMimeType(t *testing.T) {
+	mime, err := getAssetMime("mime.fyjhfgjhfgjh")
+
+	if mime != "" {
+		t.Errorf("should have returned '' but returned: %s", mime)
+	}
+
+	if err == nil {
+		t.Error("should have returned an error but returned nil")
+	}
+}
+
+func createAsset(path, content string, t *testing.T) {
+	file, err := os.Create(path)
+	if err != nil {
+		t.Fatal(err)
+	} else {
+		file.WriteString(content)
+	}
+}
+
+func deleteAsset(path string) {
+	os.Remove(path)
 }
