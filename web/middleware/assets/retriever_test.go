@@ -16,7 +16,7 @@ var retriever *FileAssetsRetriever
 
 func initRetrieverTest() {
 	rootDir = os.TempDir()
-	expectedContentType = "application/javascript"
+	expectedContentType = "text/javascript"
 	assetPath = fmt.Sprintf("/%s.js", uuid.New())
 	writer = httptest.NewRecorder()
 	retriever = &FileAssetsRetriever{rootDir}
@@ -61,8 +61,8 @@ func TestWhenGettingMimeForJsAssetPath(t *testing.T) {
 		t.Error("should not have returned an error")
 	}
 
-	if mime != "application/javascript" {
-		t.Errorf("should have returned 'application/javascript' but returned: %s", mime)
+	if mime != "text/javascript" {
+		t.Errorf("should have returned 'text/javascript' but returned: %s", mime)
 	}
 }
 
@@ -75,6 +75,54 @@ func TestWhenGettingMimeForCssAssetPath(t *testing.T) {
 
 	if mime != "text/css" {
 		t.Errorf("should have returned 'text/css' but returned: %s", mime)
+	}
+}
+
+func TestWhenGettingMimeForXmlAssetPath(t *testing.T) {
+	mime, err := getAssetMime("interesting.xml")
+
+	if err != nil {
+		t.Error("should not have returned an error")
+	}
+
+	if mime != "text/xml" {
+		t.Errorf("should have returned 'text/xml' but returned: %s", mime)
+	}
+}
+
+func TestWhenGettingMimeForHtmlAssetPath(t *testing.T) {
+	mime, err := getAssetMime("interesting.html")
+
+	if err != nil {
+		t.Error("should not have returned an error")
+	}
+
+	if mime != "text/html" {
+		t.Errorf("should have returned 'text/html' but returned: %s", mime)
+	}
+}
+
+func TestWhenGettingMimeForHtmAssetPath(t *testing.T) {
+	mime, err := getAssetMime("interesting.htm")
+
+	if err != nil {
+		t.Error("should not have returned an error")
+	}
+
+	if mime != "text/html" {
+		t.Errorf("should have returned 'text/html' but returned: %s", mime)
+	}
+}
+
+func TestWhenGettingMimeForJsonAssetPath(t *testing.T) {
+	mime, err := getAssetMime("interesting.json")
+
+	if err != nil {
+		t.Error("should not have returned an error")
+	}
+
+	if mime != "application/json" {
+		t.Errorf("should have returned 'application/json' but returned: %s", mime)
 	}
 }
 

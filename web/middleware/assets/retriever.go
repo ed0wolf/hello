@@ -33,9 +33,15 @@ func (assetsRetriever *FileAssetsRetriever) Retrieve(assetPath string, w http.Re
 
 func getAssetMime(assetPath string) (string, error) {
 	if strings.HasSuffix(assetPath, ".js") {
-		return "application/javascript", nil
+		return "text/javascript", nil
+	} else if strings.HasSuffix(assetPath, ".json") {
+		return "application/json", nil
 	} else if strings.HasSuffix(assetPath, ".css") {
 		return "text/css", nil
+	} else if strings.HasSuffix(assetPath, ".xml") {
+		return "text/xml", nil
+	} else if strings.HasSuffix(assetPath, ".html") || strings.HasSuffix(assetPath, ".htm") {
+		return "text/html", nil
 	}
 	return "", errors.New("Couldn't find MIME for" + assetPath)
 }
