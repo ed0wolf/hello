@@ -8,13 +8,13 @@ import (
 const prefix string = "/assets"
 
 type AssetsHandler struct {
-	retriever AssetsRetriever
+	Retriever AssetsRetriever
 }
 
 func (handler *AssetsHandler) HandleAssets(h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		if isAssetRequest(r.RequestURI) {
-			handler.retriever.Retrieve(getAssetPath(r.RequestURI), w)
+			handler.Retriever.Retrieve(getAssetPath(r.RequestURI), w)
 		} else {
 			h.ServeHTTP(w, r)
 		}

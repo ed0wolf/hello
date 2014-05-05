@@ -18,7 +18,8 @@ func init() {
 	app = web.New()
 
 	//Add middleware
-	handler := &assets.AssetsHandler{}
+	retreiver := &assets.FileAssetsRetriever{"./assets"}
+	handler := &assets.AssetsHandler{retreiver}
 	app.Use(handler.HandleAssets)
 
 	//Add routes

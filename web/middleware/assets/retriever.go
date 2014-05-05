@@ -12,11 +12,11 @@ type AssetsRetriever interface {
 }
 
 type FileAssetsRetriever struct {
-	rootDir string
+	RootDir string
 }
 
 func (assetsRetriever *FileAssetsRetriever) Retrieve(assetPath string, w http.ResponseWriter) {
-	content, err := ioutil.ReadFile(assetsRetriever.rootDir + "/" + assetPath)
+	content, err := ioutil.ReadFile(assetsRetriever.RootDir + "/" + assetPath)
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
