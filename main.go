@@ -2,9 +2,12 @@
 package main
 
 import (
-	"github.com/ed0wolf/hello/web"
+	"flag"
+	"github.com/ed0wolf/gojistatic"
 )
 
 func main() {
-	web.Start()
+	flag.Parse()
+
+	gojistatic.Start()
 }
